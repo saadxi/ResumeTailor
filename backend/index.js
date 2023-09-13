@@ -43,7 +43,8 @@ async function parsePdfs(pdfPath) {
   // pdfParser.loadPDF(pdfPath);
   let dataBuffer = fs.readFileSync(pdfPath);
   pdf(dataBuffer).then(function (data) {
-    console.log(data.text);
+    // console.log(data.text);
+    fs.writeFile('pdfText.txt', data.text, err => console.log(err));
   });
 }
 
@@ -83,6 +84,7 @@ app.post('/upload', (req, res) => {
 
 // post
 app.post('/uploadJobDesc', (req, res) => {
+  console.log(req);
   //   this gonna store file via req.file.buffer???
   // res.send('Post is successfull');
   // const {jobDesc} = req.body;

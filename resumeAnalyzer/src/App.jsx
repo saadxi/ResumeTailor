@@ -2,7 +2,7 @@ import React, {useCallback, useState} from 'react';
 import {Document, Page} from 'react-pdf';
 import axios from 'axios';
 import path from 'path';
-import output1 from './output1.png';
+import output1 from '/Users/saadiqbal/myProjects/resumeAnalyzer/backend/output1.png';
 
 import './App.css';
 
@@ -11,6 +11,8 @@ function App() {
   const [isFilePicked, setisFilePicked] = useState(false);
   const [isSubmit, setisSubmit] = useState(false);
   const [reqProc, setreqProc] = useState(false);
+
+  const [textareaVal, setTextareaVal] = useState('');
   const [jobDesc, setjobDesc] = useState('');
 
   const changeHandler = event => {
@@ -45,9 +47,19 @@ function App() {
       .then(setreqProc(true));
   };
 
+  const handleTextAreaChange = e => {
+    setTextareaVal(e.target.value);
+  };
+
+  const handleTextAreaSubmit = e => {
+    e.preventDefault();
+    const txt = textareaVal;
+    jobdescSubmit(txt);
+  };
+
   const jobdescSubmit = async jobDesc => {
     if (jobDesc == '') return;
-
+    console.log('post reached');
     const response = await fetch('http://localhost:4000/uploadJobDesc', {
       method: 'POST',
       body: jobDesc,
@@ -55,7 +67,7 @@ function App() {
       .catch(e => {
         console.log(e);
       })
-      .then(setjobDesc(true));
+      .then(setjobDesc(jobDesc));
   };
 
   return (
@@ -83,21 +95,23 @@ function App() {
               Enter job description here...
             </textarea>
           </div> */}
-          <div class="w-93 p-5 bg-gray-600">
+          <div class="w-93 p-2 bg-gray-600">
             <form>
               <div class="mb-6 text-black">
                 <textarea
                   id="textarea"
                   name="textarea"
-                  rows="4"
+                  rows="12"
                   class="w-full py-2 px-3 border border-gray-300"
-                  placeholder="Enter your text here"></textarea>
+                  onChange={handleTextAreaChange}
+                  placeholder="Enter your job description..."></textarea>
               </div>
 
-              <div class="mb-6 text-black">
+              <div class="mb-2">
                 <button
                   type="submit"
-                  class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
+                  class="bg-gray-800 text-white py-2 px-4  hover:bg-gray-700 focus:bg-gray-700"
+                  onSubmit={handleTextAreaSubmit}>
                   Submit
                 </button>
               </div>
