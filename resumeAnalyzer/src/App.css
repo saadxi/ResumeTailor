@@ -1,0 +1,40 @@
+body {
+  background-color: rgb(62, 75, 85);
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+  font-family: 'Poppins', sans-serif;
+}
+
+h1 {
+  text-align: center;
+}
+
+.p1 {
+  text-align: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.dz {
+  display: flex;
+  justify-content: center;
+  /* text-align: center; */
+  /* align-items: center; */
+  /* padding-top: 30px; */
+  outline: 1px solid;
+  outline-color: white;
+  margin-top: 10px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  width: 500px;
+  margin: auto;
+}
+
+.sb {
+  padding-top: 100px;
+  text-align: center;
+}
+
+.customImg {
+  max-height: 600px;
+}
