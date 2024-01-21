@@ -1,6 +1,7 @@
-node_modules
-*.local
-
+# ignore .env
+.env
+# ignore node folder
+node_modules/
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
