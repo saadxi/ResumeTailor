@@ -3,6 +3,7 @@ import {Document, Page} from 'react-pdf';
 import axios from 'axios';
 import path from 'path';
 import output1 from '/Users/saadiqbal/myProjects/resumeAnalyzer/backend/output1.png';
+import DataDashboard from './Components/DataDashboard';
 
 import './App.css';
 
@@ -11,9 +12,12 @@ function App() {
   const [isFilePicked, setisFilePicked] = useState(false);
   const [isSubmit, setisSubmit] = useState(false);
   const [reqProc, setreqProc] = useState(false);
+  const [jobText, setjobText] = useState('');
+  const [submitjobText, setsubmitjobText] = useState(false);
+  // for UI elements
 
-  const [textareaVal, setTextareaVal] = useState('');
-  const [jobDesc, setjobDesc] = useState('');
+  const [loadingState, setloadingState] = useState(false);
+  const [responseState, setresponseState] = useState(false);
 
   const changeHandler = event => {
     setFile(event.target.files[0]);
@@ -34,6 +38,7 @@ function App() {
         console.log(e);
       })
       .then(setisSubmit(true));
+
     handleRequest();
   };
 
@@ -48,13 +53,36 @@ function App() {
   };
 
   const handleTextAreaChange = e => {
-    setTextareaVal(e.target.value);
+    setjobText(e.target.value);
+    // console.log(textareaVal);
   };
 
   const handleTextAreaSubmit = e => {
     e.preventDefault();
-    const txt = textareaVal;
-    jobdescSubmit(txt);
+    console.log(jobText);
+
+    jobdescSubmit(jobText);
+  };
+  // const handleTextAreaSubmit = event => {
+  //   // event.preventDefault();
+  //   console.log(textareaVal);
+  //   // jobdescSubmit(textareaVal);
+  // };
+
+  const requestData = async () => {
+    setloadingState(true);
+    const response = await fetch('http://localhost4000/data', {
+      method: 'GET',
+    })
+      .catch(error => {
+        console.error(error);
+      })
+      .then(() => {
+        setloadingState(false);
+        setresponseState(true);
+      });
+
+    return requestData;
   };
 
   const jobdescSubmit = async jobDesc => {
@@ -62,17 +90,28 @@ function App() {
     console.log('post reached');
     const response = await fetch('http://localhost:4000/uploadJobDesc', {
       method: 'POST',
-      body: jobDesc,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        job_description: jobDesc,
+      }),
     })
       .catch(e => {
-        console.log(e);
+        console.error('error sending job desc', e);
       })
-      .then(setjobDesc(jobDesc));
+      .then(() => {
+        setsubmitjobText(true);
+      });
+    if (isSubmit) {
+      requestData();
+    }
   };
 
   return (
     <>
       <h1 className="text-4xl font-bold my-8">Resume Analyzer</h1>
+
       <div className="grid grid-cols-2 gap-10">
         <div className="mx-5">
           <div className="mb-10">
@@ -84,38 +123,24 @@ function App() {
             <button onClick={handleSubmit}>Submit</button>
           </div>
 
-          {isSubmit ? <p>File Submitted. Now Loading...</p> : <p>Choose File</p>}
+          {isSubmit ? <p>File Submitted </p> : <p>Choose File</p>}
           {reqProc ? <img src={output1} className="customImg" /> : <p> </p>}
         </div>
+
         <div className="mx-5">
           <p className="mb-10 font-bold"> Enter your desired job decription here: </p>
-          {/* <div className="">
-          
-            <textarea rows={10} cols={60} color="black">
-              Enter job description here...
-            </textarea>
-          </div> */}
-          <div class="w-93 p-2 bg-gray-600">
-            <form>
-              <div class="mb-6 text-black">
-                <textarea
-                  id="textarea"
-                  name="textarea"
-                  rows="12"
-                  class="w-full py-2 px-3 border border-gray-300"
-                  onChange={handleTextAreaChange}
-                  placeholder="Enter your job description..."></textarea>
-              </div>
 
-              <div class="mb-2">
-                <button
-                  type="submit"
-                  class="bg-gray-800 text-white py-2 px-4  hover:bg-gray-700 focus:bg-gray-700"
-                  onSubmit={handleTextAreaSubmit}>
-                  Submit
-                </button>
-              </div>
-            </form>
+          <textarea
+            id="textarea"
+            name="textarea"
+            rows="12"
+            // class="w-full py-2 px-3 border border-gray-300"
+            className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            onChange={handleTextAreaChange}
+            placeholder="Enter your job description..."></textarea>
+
+          <div>
+            <button onClick={handleTextAreaSubmit}>Submit</button>
           </div>
         </div>
       </div>
